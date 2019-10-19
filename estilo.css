@@ -1,0 +1,12 @@
+Text{
+	-fx-font-size: 30pt;
+	-fx-font-familt: "Arial";
+	-fx-fill: black;
+	-fx-font-weight: bold;
+}
+
+Label{
+	-fx-font-size: 30pt;
+	-fx-fill: black;
+	-fx-font-weight: bold;
+}

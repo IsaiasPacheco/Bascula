@@ -2,8 +2,6 @@ import javafx.application.*;
 import javafx.stage.*;
 import javafx.scene.*;
 
-
-
 public class Principal extends Application {
 	private Scene scene;
 	@Override
@@ -27,8 +25,5 @@ public class Principal extends Application {
 	}
 	public static void main(String[] args) {
 		launch();
-
-
-
 	}
 }

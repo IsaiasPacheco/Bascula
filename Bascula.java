@@ -1,14 +1,13 @@
 import javafx.scene.Parent;
-import javafx.scene.layout.StackPane;
+import javafx.scene.layout.*;
 import javafx.scene.shape.*;
 import javafx.scene.paint.Color;
 import javafx.scene.effect.*;
 import javafx.scene.text.*;
 import javafx.scene.*;
-import java.util.*;
 import javafx.animation.*;
-import javafx.scene.layout.VBox;
-import javafx.scene.control.Label;
+import javafx.application.Platform;
+import javafx.scene.control.*;
 import javafx.geometry.*;
 
 import jssc.SerialPortEvent;
@@ -26,31 +25,48 @@ public class Bascula extends Parent{
 	private StackPane stp;
 	private Dial segundero;
 	private Group group;
-	private Calendar calendar;
+	//Textarea
+	private HBox hboxText;
+	private TextArea textArea;
+	
 	public Bascula(){
 		stp = new StackPane();
 		segundero = new Dial(200,50,5,Color.CRIMSON);
 		group = new Group();
 		group.getChildren().add(stp);
 		group.getChildren().addAll(segundero);
-		vb = new VBox(10);
+		vb = new VBox();
 		vb.getChildren().add(group);
-		datos = new Label("0.0 Kilos");
-		vb.getChildren().add(datos);
+		//TextArea
+		hboxText = new HBox();
+		textArea = new TextArea();
+
+		textArea.setMaxWidth(22);
+		textArea.setPrefHeight(22);
+		textArea.setEditable(false);
+		textArea.setPadding(new Insets(40,0,0,10));
+		
+		datos = new Label("Kilos");
+		hboxText.setAlignment(Pos.CENTER);
+		vb.getChildren().add(hboxText);
+		addImage();
+		hboxText.getChildren().add(textArea);
+		hboxText.getChildren().add(datos);
+
 		vb.setAlignment(Pos.CENTER);
 		getChildren().add(vb);
 		layoult();
 		segundero.actualizar(0);
-		addImage();
+		textArea.setText(" 0.0");
 	}
 	private void addImage(){
 		try{
     		InputStream is = getClass().getResourceAsStream("box.png");
     		Image img = new Image(is);
     		ImageView iv = new ImageView(img);
-    		iv.setFitWidth(70);
-			iv.setFitHeight(70);
-			datos.setGraphic(iv);
+    		iv.setFitWidth(50);
+			iv.setFitHeight(50);
+			hboxText.getChildren().add(iv);
     	}catch(Exception ex){
     		ex.printStackTrace();
     	}	
@@ -58,7 +74,7 @@ public class Bascula extends Parent{
 
 	private void addCircle(){
 		try{
-    		InputStream is = getClass().getResourceAsStream("aro.jpg");
+    		InputStream is = getClass().getResourceAsStream("arov2.jpg");
     		Image img = new Image(is);
     		ImageView iv = new ImageView(img);
     		iv.setFitWidth(600);
@@ -69,12 +85,25 @@ public class Bascula extends Parent{
     	}
 	}
 
-	private void layoult(){
-		addCircle();
-		Circle luna = new Circle(220, Color.WHITESMOKE);
-		luna.setEffect(new InnerShadow());
-		stp.getChildren().addAll(luna);
+	private void addMin(){
+		Rectangle[] tickMinuto = new Rectangle[60];
+		for(int i = 0; i < 60; i++){
+			if((i >= 11 && i <= 19)){
+				continue;
+			}
+			if( i%5 == 0 ){
+				tickMinuto[i] = new Rectangle(20,2,Color.RED);	
+			}else{
+				tickMinuto[i] = new Rectangle(10,2,Color.BLACK);
+			}
+			tickMinuto[i].setTranslateX(190*Math.cos(-(Math.PI/30)*i));
+			tickMinuto[i].setTranslateY(190*Math.sin(-(Math.PI/30)*i));
+			tickMinuto[i].setRotate(-(180/30)*i);
+			stp.getChildren().add(tickMinuto[i]);
+		}
+	}
 
+	private void addHor(){
 		Rectangle[] tickHora = new Rectangle[6];
 		Text[] txt = new Text[6];
 		for(int i = 0; i < 6; i++){
@@ -96,29 +125,20 @@ public class Bascula extends Parent{
 
 		stp.getChildren().addAll(txt);
 		stp.getChildren().addAll(tickHora);
-
-		Rectangle[] tickMinuto = new Rectangle[60];
-		for(int i = 0; i < 60; i++){
-			if((i >= 11 && i <= 19)){
-				continue;
-			}
-			tickMinuto[i] = new Rectangle(10,2,Color.BLACK);
-			tickMinuto[i].setTranslateX(190*Math.cos(-(Math.PI/30)*i));
-			tickMinuto[i].setTranslateY(190*Math.sin(-(Math.PI/30)*i));
-			tickMinuto[i].setRotate(-(180/30)*i);
-			stp.getChildren().add(tickMinuto[i]);
-		}
-
+	}
+	private void layoult(){
+		addCircle();
+		Circle luna = new Circle(220, Color.WHITESMOKE);
+		luna.setEffect(new InnerShadow());
+		stp.getChildren().addAll(luna);
+		addMin();
+		addHor();
 		group.getChildren().add(new Circle(300,300,10,Color.CRIMSON));
 		group.getChildren().add(new Circle(300,300,5,Color.BLACK));
 		actualizar();
 	}
 
 	private void actualizar(){
-		calendar = Calendar.getInstance();
-		int hor = calendar.get(Calendar.HOUR);
-		int min = calendar.get(Calendar.MINUTE);
-		int sec = calendar.get(Calendar.SECOND);
 		double angulo = 360.0/6.0;
 		PanamaHitek_Arduino ino = new PanamaHitek_Arduino();
 		SerialPortEventListener listerner = new SerialPortEventListener() {
@@ -133,7 +153,7 @@ public class Bascula extends Parent{
                         	valor = 5;
                         }
 						segundero.actualizar(angulo*valor);
-						datos.setText(valor+" Kilos");
+						textArea.setText(" "+valor);
                     }
                 } catch (SerialPortException e) {
                     System.out.println("Error: " + e);
@@ -142,7 +162,6 @@ public class Bascula extends Parent{
                 }
             }
 		};
-		
 		try {
             ino.arduinoRX("COM6", 9600, listerner);
         } catch (ArduinoException e) {

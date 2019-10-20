@@ -1,6 +1,6 @@
 @echo off 
 
-javac -cp .;Conexion.jar Principal.java Dial.java Reloj.java
+javac -cp .;Conexion.jar Principal.java Dial.java Bascula.java
 
 echo "Todo bien..." 
 

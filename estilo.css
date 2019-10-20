@@ -10,3 +10,12 @@ Label{
 	-fx-fill: black;
 	-fx-font-weight: bold;
 }
+
+TextArea{
+	-fx-font-size: 30pt;
+	-fx-fill: black;
+	-fx-font-weight: bold;
+	-fx-focus-color: transparent;
+	-fx-faint-focus-color: transparent;
+	
+}

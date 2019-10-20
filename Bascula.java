@@ -41,12 +41,11 @@ public class Bascula extends Parent{
 		hboxText = new HBox();
 		textArea = new TextArea();
 
-		textArea.setMaxWidth(22);
-		textArea.setPrefHeight(22);
-		textArea.setEditable(false);
-		textArea.setPadding(new Insets(40,0,0,10));
 		
-		datos = new Label("Kilos");
+		textArea.setEditable(false);
+		//textArea.setPadding(new Insets(0,0,0,40));
+		
+		datos = new Label(" Kilos");
 		hboxText.setAlignment(Pos.CENTER);
 		vb.getChildren().add(hboxText);
 		addImage();
@@ -57,7 +56,7 @@ public class Bascula extends Parent{
 		getChildren().add(vb);
 		layoult();
 		segundero.actualizar(0);
-		textArea.setText(" 0.0");
+		textArea.setText(" 0.0 ");
 	}
 	private void addImage(){
 		try{
@@ -153,7 +152,7 @@ public class Bascula extends Parent{
                         	valor = 5;
                         }
 						segundero.actualizar(angulo*valor);
-						textArea.setText(" "+valor);
+						textArea.setText(valor+"");
                     }
                 } catch (SerialPortException e) {
                     System.out.println("Error: " + e);
@@ -163,7 +162,7 @@ public class Bascula extends Parent{
             }
 		};
 		try {
-            ino.arduinoRX("COM6", 9600, listerner);
+            ino.arduinoRX("COM4", 9600, listerner);
         } catch (ArduinoException e) {
             System.out.println("Error: " + e);
         } catch (SerialPortException e) {

@@ -11,11 +11,21 @@ Label{
 	-fx-font-weight: bold;
 }
 
-TextArea{
+TextArea {
 	-fx-font-size: 30pt;
 	-fx-fill: black;
 	-fx-font-weight: bold;
+	-fx-padding: 0 20 0 0;
 	-fx-focus-color: transparent;
 	-fx-faint-focus-color: transparent;
+	-fx-hbar-policy: NEVER;
+    -fx-vbar-policy: NEVER;
+	-fx-pref-width: 125;
+	-fx-pref-height: 40;
 	
+}
+
+.scroll-pane {
+    -fx-hbar-policy: never;
+    -fx-vbar-policy: never;
 }
